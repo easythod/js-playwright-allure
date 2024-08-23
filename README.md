@@ -1,7 +1,7 @@
 # js-playwright-allure
 
 This project provides the ability to integrate Playwright collections into the Continuous Integration (CI) process, allowing API and UI tests to be run automatically. The results of test execution are processed and presented as a detailed Allure report, which contains full information about each test, including its steps, parameters, answers and possible errors, as well as a video of the UI test process. This provides visibility and convenience when analyzing test results, allowing you to quickly identify and fix problems.
-
+ 
 ## Сontent
 - [Technology](#Technology)
 - [Requirements](#Requirements)
