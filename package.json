@@ -1,0 +1,26 @@
+{
+  "name": "playwrightproj",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "api_test": "npx playwright test api_test/api_tests.spec.js --project=Booking_API --reporter=line,allure-playwright",
+    "ui_test": "npx playwright test ui_tests/ui_tests.spec.js --project=Booking_UI --reporter=line,allure-playwright",
+    "test": "npm run api_test || npm run ui_test",
+    "allure_results": "allure generate allure-results -o allure-report --clean",
+    "allure_report": "allure open allure-report",
+    "allure": "npm run allure_results || npm run allure_report"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@playwright/test": "^1.25.1",
+    "allure-commandline": "^2.18.1",
+    "allure-playwright": "^2.0.0-beta.19",
+    "experimental-allure-playwright": "^0.0.3"
+  },
+  "dependencies": {
+    "js-yaml": "^4.1.0"
+  }
+}

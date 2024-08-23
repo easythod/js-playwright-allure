@@ -1,0 +1,11 @@
+/test-results/
+/playwright-report/
+/playwright/.cache/
+.jshintrc
+/img
+/apitests
+/allure-report
+/allure-results
+/tests-examples
+/node_modules
+README_draft.md

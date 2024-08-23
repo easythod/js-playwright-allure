@@ -1,0 +1,27 @@
+signIn:
+  username: admin
+  password: password123
+
+bookingPost:
+  firstname: Den
+  lastname: Singer
+  totalprice: 101
+  depositpaid: true
+  bookingdates:
+    checkin: 2025-01-01
+    checkout: 2025-02-01
+  additionalneeds: Breakfast
+
+bookingPut:
+  firstname: Sem
+  lastname: Singer
+  totalprice: 150
+  depositpaid: true
+  bookingdates:
+    checkin: 2025-01-01
+    checkout: 2025-03-15
+  additionalneeds: Breakfast
+
+bookingPatch:
+  firstname: Boby
+  lastname: Singer
