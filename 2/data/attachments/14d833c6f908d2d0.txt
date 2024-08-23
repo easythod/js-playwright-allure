@@ -1,0 +1,1 @@
+{"bookingid":2857,"booking":{"firstname":"Den","lastname":"Singer","totalprice":101,"depositpaid":true,"bookingdates":{"checkin":"2025-01-01","checkout":"2025-02-01"},"additionalneeds":"Breakfast"}}

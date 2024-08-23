@@ -1,0 +1,1 @@
+{"URL":"https://restful-booker.herokuapp.com/booking/2857","headers":{"Accept":"application/json","Content-Type":"application/json","Cookie":"token=4de24bee08ac9c8"},"body":{"firstname":"Sem","lastname":"Singer","totalprice":150,"depositpaid":true,"bookingdates":{"checkin":"2025-01-01T00:00:00.000Z","checkout":"2025-03-15T00:00:00.000Z"},"additionalneeds":"Breakfast"}}
