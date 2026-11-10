@@ -35,8 +35,9 @@ const config = {
   forbidOnly: !!process.env.CI,
   /* Retry on CI only */
   retries: process.env.CI ? 2 : 0,
-  /* Opt out of parallel tests on CI. */
-  workers: process.env.CI ? 1 : 1,
+  /* Always serial: the API spec shares `id` and `headers` across tests at module scope, so
+     bk-3..bk-7 depend on file order. See CLAUDE.md before raising this. */
+  workers: 1,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   // reporter: 'html',
   // reporter: [['line'], ['allure-playwright']],
@@ -46,14 +47,6 @@ const config = {
     baseURL: 'https://restful-booker.herokuapp.com',
     screenshot: "on",
     video: "on",
-    extraHTTPHeaders: {
-      // We set this header per GitHub guidelines.
-      'Accept': 'application/json',
-      'Content-Type': 'application/json',
-      // Add authorization token to all requests.
-      // Assuming personal access token available in the environment.
-      'Cookie': `token=617672782c6ccb8`
-    },
     /* Maximum time each action such as `click()` can take. Defaults to 0 (no limit). */
     actionTimeout: 0,
     /* Base URL to use in actions like `await page.goto('/')`. */
@@ -69,6 +62,16 @@ const config = {
       name: 'Booking_API',
       use: {
         ...devices['Desktop Chrome'],
+        // These belong to the API project ONLY. While they lived in the shared `use` block above
+        // they were attached to every browser request too, which made all 22 cross-origin
+        // stylesheet requests to github.githubassets.com fail with net::ERR_FAILED - so the UI
+        // tests navigated an unstyled GitHub and the report captured a page mid-paint.
+        extraHTTPHeaders: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json',
+          // Overwritten by the token [bk-2] fetches; kept so [bk-3] has a Cookie header to send.
+          'Cookie': `token=617672782c6ccb8`
+        },
       },
     },
 

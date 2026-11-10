@@ -7,8 +7,11 @@ exports.Scenario4 = class Scenario4 {
    */
   constructor(page) {
     this.page = page;
-    this.codeLink = page.locator('//html/body/div[1]/div/div[2]/div/p/a[3]');
-    this.gotoGitPageLink = page.locator('//*[@id="repo-content-pjax-container"]/div/div/div[3]/div[2]/div/div[1]/div/div[1]/span/a');
+    // Attribute selectors rather than absolute XPath: GitHub rewrites its repo-page DOM often,
+    // which is what broke the previous "#repo-content-pjax-container/div/div/..." path.
+    this.codeLink = page.locator('a[alt="API Code"]');
+    // The repo's About sidebar links back to the live API; same tab, no target="_blank".
+    this.gotoGitPageLink = page.locator('a[href="https://restful-booker.herokuapp.com/"]');
   }
 
   async goto(baseURL) {
@@ -20,10 +23,10 @@ exports.Scenario4 = class Scenario4 {
   }
 
   async clickGotoGitPageLink() {
-    await this.gotoGitPageLink.click();
+    await this.gotoGitPageLink.first().click();
   }
 
   async expectURL() {
-    await expect(this.page).not.toHaveURL('https://www.mwtestconsultancy.co.uk/training/apitesting/');
+    await expect(this.page).toHaveURL(/^https:\/\/restful-booker\.herokuapp\.com\/?$/);
   }
 };

@@ -1,55 +1,78 @@
 name: run-playwright
- 
+
+# Only main publishes. The deploy step below rewrites the public Allure report, so letting every
+# branch push trigger this would republish the showcase from throwaway work.
 on:
-  push
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write # actions-gh-pages pushes the report to the gh-pages branch
 
 jobs:
   e2e-tests:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-node@v1
+      - uses: actions/setup-node@v7
         with:
-          node-version: 16.x
+          node-version: 22.x
 
-      - uses: microsoft/playwright-github-action@v1
-
+      # No microsoft/playwright-github-action here: it is archived upstream, and when it failed on
+      # 2026-11-05 it skipped the install step and published an empty report. `--with-deps` covers
+      # the system libraries it used to provide. Only chromium is needed; both projects are
+      # Desktop Chrome.
       - name: Install dependencies
-        run: npm install && npx playwright install
+        run: |
+          npm ci
+          npx playwright install --with-deps chromium
 
+      # continue-on-error on the two test steps is deliberate: [bk-7] and the scenario2 UI test are
+      # designed to fail, and must not fail the build. See CLAUDE.md.
       - name: Run tests API
         if: always()
         run: npx playwright test api_test/api_tests.spec.js --project=Booking_API --reporter=line,allure-playwright
         continue-on-error: true
-          
+
       - name: Run tests UI
         if: always()
         run: npx playwright test ui_tests/ui_tests.spec.js --project=Booking_UI --reporter=line,allure-playwright
         continue-on-error: true
 
-      - name: Get Allure history
-        uses: actions/checkout@v2
+      # The guard that was missing. continue-on-error above hides a genuine breakage (no deps, no
+      # browser, bad config) behind a green step, so check that results actually exist before
+      # publishing. Failing here leaves the previous published report intact.
+      - name: Verify Allure results were produced
         if: always()
+        run: |
+          count=$(ls -1 allure-results/*-result.json 2>/dev/null | wc -l | tr -d ' ')
+          echo "Allure result files: $count"
+          if [ "$count" -eq 0 ]; then
+            echo "::error::No Allure results were produced - refusing to publish an empty report."
+            exit 1
+          fi
+
+      # From here the steps intentionally use the default `if: success()`. If the verify step above
+      # failed, nothing below runs and the live report is left untouched.
+      - name: Get Allure history
+        uses: actions/checkout@v7
         continue-on-error: true
         with:
           ref: gh-pages
           path: gh-pages
 
       - name: Allure Report action from marketplace
-        uses: simple-elf/allure-report-action@master
-        if: always()
+        uses: simple-elf/allure-report-action@v1.15
         with:
           allure_results: allure-results
           allure_history: allure-history
 
       - name: Deploy report to Github Pages
-        if: always()
-        uses: peaceiris/actions-gh-pages@v2
-        env:
-          PERSONAL_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PUBLISH_BRANCH: gh-pages
-          PUBLISH_DIR: allure-history  
-          
-      
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: ./allure-history

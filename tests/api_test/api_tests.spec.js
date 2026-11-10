@@ -1,6 +1,5 @@
 import { expect, test } from "@playwright/test";
-// import { allure } from "allure-playwright";
-import { allure, LabelName } from "allure-playwright";
+import { link } from "allure-js-commons";
 const yaml = require('js-yaml');
 const fs   = require('fs');
 const doc = yaml.load(fs.readFileSync("tests/prod.yml", 'utf8'));
@@ -12,9 +11,8 @@ let headers = {
 
 
 test('[bk-1] GET/ping', async ({ request, baseURL }, testInfo) => {
-    allure.label({ name: LabelName.LANGUAGE, value: "javascript" });
     //Ping site
-    allure.link({ url: `${baseURL}`, name: "Welcome to Restful-Booker" });
+    await link(`${baseURL}`, "Welcome to Restful-Booker");
     let requestPing = {
         URL: `${baseURL}/ping`
     };
@@ -151,7 +149,11 @@ test('[bk-6] DELETE/booking{id}', async ({ request, baseURL }, testInfo) => {
     expect(deleteEntry.status()).toBe(201);
 });
 
-test('[bk-7] PUT/booking{id} - faild', async ({ request, baseURL }, testInfo) => {
+// INTENTIONAL FAILURE. A deliberate duplicate of [bk-4], run after [bk-6] has deleted the booking:
+// the request is legitimate and the code is correct, but the expected 200 can never arrive (the API
+// answers 405), so every Allure run ships a red API example. Do not "fix" this assertion - see
+// CLAUDE.md and the ` - failed` title convention.
+test('[bk-7] PUT/booking{id} - failed', async ({ request, baseURL }, testInfo) => {
     //PUT
     const putEntry = await request.put(`${baseURL}/booking/${id}`, {
         headers,
