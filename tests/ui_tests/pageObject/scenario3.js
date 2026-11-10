@@ -7,9 +7,12 @@ exports.Scenario3 = class Scenario3 {
    */
   constructor(page) {
     this.page = page;
-    this.websiteLink = page.locator('//html/body/div[1]/div/div[2]/div/p/a[2]');
-    this.buttonPurchaseTestingWebAPIs = page.locator('//html/body/div[2]/div[2]/div/div[3]/p/a');
-    this.nameBook = page.locator('//*[@id="page-main-content-row"]/div[1]/div/div/div/div/div[2]/h1');
+    // Attribute selectors rather than absolute XPath: mwtestconsultancy.co.uk is a third-party
+    // site that has already been restructured once (the old "Purchase Testing Web APIs now"
+    // button is gone; the books now live on a /books/ page).
+    this.websiteLink = page.locator('a[alt="MWTestConsultancy Website"]');
+    this.booksLink = page.locator('a[href$="/books/"]');
+    this.nameBook = page.locator('h3#testing-web-apis');
   }
 
   async goto(baseURL) {
@@ -20,11 +23,11 @@ exports.Scenario3 = class Scenario3 {
     await this.websiteLink.click();
   }
 
-  async clickbuttonPurchaseTestingWebAPIs() {
-    await this.buttonPurchaseTestingWebAPIs.click();
+  async clickBooksLink() {
+    await this.booksLink.first().click();
   }
 
   async expectNameBook() {
-    await expect(this.nameBook).toContainText(await this.nameBook.innerText());
+    await expect(this.nameBook).toHaveText('Testing Web APIs');
   }
 };

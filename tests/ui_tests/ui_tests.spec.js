@@ -24,7 +24,7 @@ test('API Docs', async ({ page, baseURL }) => {
   });
 });
 
-test('Buy Me a Tea And a Cake', async ({ page, baseURL }) => {
+test('Buy Me a Tea And a Cake - failed', async ({ page, baseURL }) => {
   const scenario2 = new Scenario2(page);
   await test.step("Visit site", async () => {
     await scenario2.goto(`${baseURL}`);
@@ -45,8 +45,8 @@ test('Web site', async ({ page, baseURL }) => {
   await test.step("Click Website Link", async () => {
     await scenario3.clickWebsiteLink();
   });
-  await test.step("Click Button Purchase Testing Web APIs now", async () => {
-    await scenario3.clickbuttonPurchaseTestingWebAPIs();
+  await test.step("Click Books Link", async () => {
+    await scenario3.clickBooksLink();
   });
   await test.step("Expect name Book", async () => {
     await scenario3.expectNameBook();

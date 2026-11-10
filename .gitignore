@@ -9,3 +9,6 @@
 /tests-examples
 /node_modules
 README_draft.md
+CLAUDE.local.md
+*.code-workspace
+.local/

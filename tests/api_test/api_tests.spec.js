@@ -151,7 +151,7 @@ test('[bk-6] DELETE/booking{id}', async ({ request, baseURL }, testInfo) => {
     expect(deleteEntry.status()).toBe(201);
 });
 
-test('[bk-7] PUT/booking{id} - faild', async ({ request, baseURL }, testInfo) => {
+test('[bk-7] PUT/booking{id} - failed', async ({ request, baseURL }, testInfo) => {
     //PUT
     const putEntry = await request.put(`${baseURL}/booking/${id}`, {
         headers,
