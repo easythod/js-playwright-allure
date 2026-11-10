@@ -2,8 +2,6 @@
 /playwright-report/
 /playwright/.cache/
 .jshintrc
-/img
-/apitests
 /allure-report
 /allure-results
 /tests-examples

@@ -149,6 +149,10 @@ test('[bk-6] DELETE/booking{id}', async ({ request, baseURL }, testInfo) => {
     expect(deleteEntry.status()).toBe(201);
 });
 
+// INTENTIONAL FAILURE. A deliberate duplicate of [bk-4], run after [bk-6] has deleted the booking:
+// the request is legitimate and the code is correct, but the expected 200 can never arrive (the API
+// answers 405), so every Allure run ships a red API example. Do not "fix" this assertion - see
+// CLAUDE.md and the ` - failed` title convention.
 test('[bk-7] PUT/booking{id} - failed', async ({ request, baseURL }, testInfo) => {
     //PUT
     const putEntry = await request.put(`${baseURL}/booking/${id}`, {

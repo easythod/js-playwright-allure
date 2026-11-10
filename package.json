@@ -1,19 +1,18 @@
 {
   "name": "playwrightproj",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Playwright API and UI tests against the Restful-Booker sandbox, reported with Allure.",
   "scripts": {
     "api_test": "npx playwright test api_test/api_tests.spec.js --project=Booking_API --reporter=line,allure-playwright",
     "ui_test": "npx playwright test ui_tests/ui_tests.spec.js --project=Booking_UI --reporter=line,allure-playwright",
-    "test": "npm run api_test || npm run ui_test",
+    "test": "npm run api_test; npm run ui_test",
     "allure_results": "allure generate allure-results -o allure-report --clean",
     "allure_report": "allure open allure-report",
-    "allure": "npm run allure_results || npm run allure_report"
+    "allure": "npm run allure_results && npm run allure_report"
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "devDependencies": {
     "@playwright/test": "^1.65.0",
     "allure-commandline": "^2.18.1",

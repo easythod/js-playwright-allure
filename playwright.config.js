@@ -35,8 +35,9 @@ const config = {
   forbidOnly: !!process.env.CI,
   /* Retry on CI only */
   retries: process.env.CI ? 2 : 0,
-  /* Opt out of parallel tests on CI. */
-  workers: process.env.CI ? 1 : 1,
+  /* Always serial: the API spec shares `id` and `headers` across tests at module scope, so
+     bk-3..bk-7 depend on file order. See CLAUDE.md before raising this. */
+  workers: 1,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   // reporter: 'html',
   // reporter: [['line'], ['allure-playwright']],
