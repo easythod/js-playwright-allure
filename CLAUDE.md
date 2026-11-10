@@ -51,10 +51,14 @@ The `--project` flag is required: both projects are Desktop Chrome and differ on
 
 ## Architecture
 
-- `playwright.config.js` — one shared `use` block for both projects: `baseURL` is the Restful-Booker
-  host (API *and* UI tests target it), `screenshot: "on"` and `video: "on"` are always captured so the
-  Allure report can embed UI recordings, and `extraHTTPHeaders` carries a hardcoded `Cookie` token.
-  `workers: 1` everywhere, despite `fullyParallel: true`.
+- `playwright.config.js` — the shared `use` block holds `baseURL` (the Restful-Booker host: API
+  *and* UI tests target it) plus `screenshot: "on"` / `video: "on"`, so the Allure report can embed
+  UI recordings. `workers: 1` everywhere, despite `fullyParallel: true`.
+  **`extraHTTPHeaders` belongs to the `Booking_API` project only — never move it back into the
+  shared block.** Those API headers (`Accept`/`Content-Type: application/json`, a `Cookie`) are
+  attached to *every* browser request too when shared, which made all 22 cross-origin stylesheet
+  requests to `github.githubassets.com` fail with `net::ERR_FAILED`. The UI tests still passed, so
+  the only symptom was an unstyled GitHub page in the screenshots and video.
 - `tests/api_test/api_tests.spec.js` — one flat spec with **module-level shared state**: `id` (booking
   id from `[bk-3]`) and `headers` (auth token from `[bk-2]`). Tests `bk-3`…`bk-7` therefore depend on
   earlier tests in file order and only pass because `workers: 1` keeps them sequential. Do not add
@@ -73,6 +77,11 @@ The `--project` flag is required: both projects are Desktop Chrome and differ on
   could be moved to roles when next touched.
 - `scenario2` is popup-aware: the support banner is `target="_blank"`, so it captures the second tab
   with `context.waitForEvent('page')` and asserts against that document, not `page`.
+- `ui_tests.spec.js` has an `attachPage()` helper used by `Web site` and `Code #4`. `screenshot: "on"`
+  only fires at test end, and both journeys navigate away from the page worth showing (`Code #4`
+  finishes back on Restful-Booker), so without an explicit mid-test attachment the report never
+  shows GitHub or the MWTestConsultancy site at all. It waits for `load` first, since Playwright
+  clicks as soon as a link is actionable — often before the page has painted.
 - `tests/prod.yml` — all API request bodies and credentials, loaded via `js-yaml` with the **relative
   path `tests/prod.yml`**, so tests must be invoked from the repo root or they throw ENOENT.
 - **Allure 3 API**: import `link`/`label` from **`allure-js-commons`**, not from the `allure` object
