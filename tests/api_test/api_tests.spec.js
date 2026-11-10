@@ -1,6 +1,5 @@
 import { expect, test } from "@playwright/test";
-// import { allure } from "allure-playwright";
-import { allure, LabelName } from "allure-playwright";
+import { link } from "allure-js-commons";
 const yaml = require('js-yaml');
 const fs   = require('fs');
 const doc = yaml.load(fs.readFileSync("tests/prod.yml", 'utf8'));
@@ -12,9 +11,8 @@ let headers = {
 
 
 test('[bk-1] GET/ping', async ({ request, baseURL }, testInfo) => {
-    allure.label({ name: LabelName.LANGUAGE, value: "javascript" });
     //Ping site
-    allure.link({ url: `${baseURL}`, name: "Welcome to Restful-Booker" });
+    await link(`${baseURL}`, "Welcome to Restful-Booker");
     let requestPing = {
         URL: `${baseURL}/ping`
     };

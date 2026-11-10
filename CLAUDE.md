@@ -68,12 +68,18 @@ The `--project` flag is required: both projects are Desktop Chrome and differ on
   `mwtestconsultancy.co.uk` (a Ghost blog) and GitHub's repo DOM — all of which have already been
   restructured once and broke the original absolute XPaths. So when a *green* UI test goes red,
   suspect upstream markup first: re-probe the live page before rewriting the test. Prefer attribute
-  or text selectors over positional paths. Note the pinned Playwright is **1.25.1**, which predates
-  `getByRole`, so stick to CSS/text engines.
+  or text selectors over positional paths. Playwright is now **1.65.0**, so `getByRole` and the
+  other `getBy*` engines are available — the existing attribute selectors predate the upgrade and
+  could be moved to roles when next touched.
 - `scenario2` is popup-aware: the support banner is `target="_blank"`, so it captures the second tab
   with `context.waitForEvent('page')` and asserts against that document, not `page`.
 - `tests/prod.yml` — all API request bodies and credentials, loaded via `js-yaml` with the **relative
   path `tests/prod.yml`**, so tests must be invoked from the repo root or they throw ENOENT.
+- **Allure 3 API**: import `link`/`label` from **`allure-js-commons`**, not from the `allure` object
+  that `allure-playwright` re-exports. That object is a legacy compat shim whose `link()` takes
+  `(type, url, name)` — passing it `(url, name)` silently files the URL under the link's `type` and
+  produces a broken link in the report, with no error. The reporter also adds `language` and
+  `framework` labels on its own, so don't set those by hand or they appear twice.
 
 ## CI
 
